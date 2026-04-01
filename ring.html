@@ -41,12 +41,7 @@
     justify-content: center;
     gap: 2px;
   }
-  .pct {
-    font-size: 58px;
-    font-weight: 700;
-    color: #ffffff;
-    line-height: 1;
-  }
+  .pct { font-size: 58px; font-weight: 700; color: #ffffff; line-height: 1; }
   .acc-label { font-size: 14px; color: rgba(255,255,255,0.5); }
   .acc-sub   { font-size: 12px; color: rgba(255,255,255,0.3); }
   .stats { display: flex; gap: 16px; width: 100%; }
@@ -57,19 +52,14 @@
     padding: 12px 16px;
     text-align: center;
   }
-  .stat-val {
-    font-size: 22px;
-    font-weight: 700;
-    display: block;
-    margin-bottom: 4px;
-  }
+  .stat-val { font-size: 22px; font-weight: 700; display: block; margin-bottom: 4px; }
   .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.5); }
 </style>
 </head>
 <body>
 <h2>听写 Accuracy This Period</h2>
 <div class="ring-wrap">
-  <svg class="ring" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" id="ring-svg">
+  <svg class="ring" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="#6a00ff"/>
@@ -85,8 +75,8 @@
     <circle id="arc" cx="140" cy="140" r="110" fill="none" stroke="url(#ringGrad)"
       stroke-width="28" stroke-linecap="round" filter="url(#ringglow)"
       stroke-dasharray="0 691.15"/>
-    <circle id="endcap-outer" cx="140" cy="30" r="16" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.85" style="display:none"/>
-    <circle id="endcap-inner" cx="140" cy="30" r="13" fill="#6a00ff" style="display:none"/>
+    <circle id="endcap-outer" cx="140" cy="30" r="15" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.9" style="display:none"/>
+    <circle id="endcap-inner" cx="140" cy="30" r="12" fill="#6a00ff" style="display:none"/>
   </svg>
   <div class="centre">
     <span class="pct" id="pct-text">0%</span>
@@ -118,11 +108,12 @@
   const circumference = 2 * Math.PI * r;
   const filled = (accuracy / 100) * circumference;
   const remaining = circumference - filled;
-
   document.getElementById('arc').setAttribute('stroke-dasharray', filled + ' ' + remaining);
 
   if (accuracy > 0) {
-    const angleDeg = (accuracy / 100) * 360 - 90;
+    // Arc starts at top (270deg in standard coords = -90deg offset)
+    // Goes clockwise. At 75%: 270 + (75/100 * 360) = 270 + 270 = 540 = 180deg standard
+    const angleDeg = -90 + (accuracy / 100) * 360;
     const angleRad = angleDeg * Math.PI / 180;
     const cx = (140 + r * Math.cos(angleRad)).toFixed(1);
     const cy = (140 + r * Math.sin(angleRad)).toFixed(1);
