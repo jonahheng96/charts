@@ -67,14 +67,13 @@
         <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     </defs>
-    <!-- Track and arc both use transform rotate(-90) so arc starts at top -->
     <circle cx="140" cy="140" r="110" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="28"/>
     <circle id="arc" cx="140" cy="140" r="110" fill="none" stroke="url(#ringGrad)"
       stroke-width="28" stroke-linecap="round" filter="url(#ringglow)"
       stroke-dasharray="0 691.15"
       transform="rotate(-90 140 140)"/>
-    <circle id="endcap-outer" cx="140" cy="30" r="15" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.9" style="display:none"/>
-    <circle id="endcap-inner" cx="140" cy="30" r="12" fill="#6a00ff" style="display:none"/>
+    <circle id="endcap-outer" cx="140" cy="30" r="14" fill="none" stroke="#ffffff" stroke-width="2.5" opacity="0.9" style="display:none"/>
+    <circle id="endcap-inner" cx="140" cy="30" r="11.5" fill="#6a00ff" style="display:none"/>
   </svg>
   <div class="centre">
     <span class="pct" id="pct-text">0%</span>
@@ -109,18 +108,48 @@
   document.getElementById('arc').setAttribute('stroke-dasharray', filled + ' ' + remaining);
 
   if (accuracy > 0) {
-    // Arc rotated -90deg around centre (140,140) so starts at top
-    // End cap angle in standard coords (no rotation needed since we rotated the arc element not the SVG)
-    // Start = top = 270deg standard = -90deg
-    // At X%: angle = -90 + (X/100 * 360)
     const angleDeg = -90 + (accuracy / 100) * 360;
     const angleRad = angleDeg * Math.PI / 180;
     const cx = (140 + r * Math.cos(angleRad)).toFixed(1);
     const cy = (140 + r * Math.sin(angleRad)).toFixed(1);
+
+    // 5-stop gradient sampled at 0%, 25%, 50%, 75%, 100%
+    // Gradient goes top-left to bottom-right (x1=0%,y1=0% → x2=100%,y2=100%)
+    // Stops: 0%=#6a00ff, 50%=#b44dff, 100%=#ff4db8
+    // Sampled at 25%: midpoint between #6a00ff and #b44dff = #9026ff
+    // Sampled at 75%: midpoint between #b44dff and #ff4db8 = #d999eb
+    const stops = [
+      { pct: 0,   color: [0x6a, 0x00, 0xff] },
+      { pct: 25,  color: [0x90, 0x26, 0xff] },
+      { pct: 50,  color: [0xb4, 0x4d, 0xff] },
+      { pct: 75,  color: [0xd9, 0x4f, 0xeb] },
+      { pct: 100, color: [0xff, 0x4d, 0xb8] },
+    ];
+
+    function lerp(a, b, t) { return Math.round(a + (b - a) * t); }
+
+    function interpolate(pct) {
+      for (let i = 0; i < stops.length - 1; i++) {
+        const s0 = stops[i], s1 = stops[i + 1];
+        if (pct >= s0.pct && pct <= s1.pct) {
+          const t = (pct - s0.pct) / (s1.pct - s0.pct);
+          const r = lerp(s0.color[0], s1.color[0], t);
+          const g = lerp(s0.color[1], s1.color[1], t);
+          const b = lerp(s0.color[2], s1.color[2], t);
+          return `rgb(${r},${g},${b})`;
+        }
+      }
+      return '#6a00ff';
+    }
+
+    const capColor = interpolate(accuracy);
+
     const eo = document.getElementById('endcap-outer');
     const ei = document.getElementById('endcap-inner');
     eo.setAttribute('cx', cx); eo.setAttribute('cy', cy); eo.style.display = '';
-    ei.setAttribute('cx', cx); ei.setAttribute('cy', cy); ei.style.display = '';
+    ei.setAttribute('cx', cx); ei.setAttribute('cy', cy);
+    ei.setAttribute('fill', capColor);
+    ei.style.display = '';
   }
 </script>
 </body>
