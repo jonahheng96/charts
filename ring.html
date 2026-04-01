@@ -72,8 +72,7 @@
       stroke-width="28" stroke-linecap="round" filter="url(#ringglow)"
       stroke-dasharray="0 691.15"
       transform="rotate(-90 140 140)"/>
-    <circle id="endcap-outer" cx="140" cy="30" r="14" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.9" style="display:none"/>
-    <circle id="endcap-inner" cx="140" cy="30" r="11.5" fill="#6a00ff" style="display:none"/>
+    <circle id="endcap" cx="140" cy="30" r="14" fill="#ffffff" style="display:none"/>
   </svg>
   <div class="centre">
     <span class="pct" id="pct-text">0%</span>
@@ -110,43 +109,12 @@
   if (accuracy > 0) {
     const angleDeg = -90 + (accuracy / 100) * 360;
     const angleRad = angleDeg * Math.PI / 180;
-    const cx = parseFloat((140 + r * Math.cos(angleRad)).toFixed(1));
-    const cy = parseFloat((140 + r * Math.sin(angleRad)).toFixed(1));
-
-    // Sample gradient based on physical SVG position
-    // Gradient: top-left(0,0) -> bottom-right(280,280)
-    // t = (cx + cy) / (280 + 280) = position along gradient diagonal
-    // Stops: t=0 -> #6a00ff, t=0.5 -> #b44dff, t=1.0 -> #ff4db8
-    const t = (cx + cy) / 560;
-
-    function lerp(a, b, t) { return Math.round(a + (b - a) * t); }
-    function interpolate(t) {
-      const c0 = [0x6a, 0x00, 0xff];
-      const c1 = [0xb4, 0x4d, 0xff];
-      const c2 = [0xff, 0x4d, 0xb8];
-      let rv, gv, bv;
-      if (t <= 0.5) {
-        const s = t / 0.5;
-        rv = lerp(c0[0], c1[0], s);
-        gv = lerp(c0[1], c1[1], s);
-        bv = lerp(c0[2], c1[2], s);
-      } else {
-        const s = (t - 0.5) / 0.5;
-        rv = lerp(c1[0], c2[0], s);
-        gv = lerp(c1[1], c2[1], s);
-        bv = lerp(c1[2], c2[2], s);
-      }
-      return `rgb(${rv},${gv},${bv})`;
-    }
-
-    const capColor = interpolate(Math.max(0, Math.min(1, t)));
-
-    const eo = document.getElementById('endcap-outer');
-    const ei = document.getElementById('endcap-inner');
-    eo.setAttribute('cx', cx); eo.setAttribute('cy', cy); eo.style.display = '';
-    ei.setAttribute('cx', cx); ei.setAttribute('cy', cy);
-    ei.setAttribute('fill', capColor);
-    ei.style.display = '';
+    const cx = (140 + r * Math.cos(angleRad)).toFixed(1);
+    const cy = (140 + r * Math.sin(angleRad)).toFixed(1);
+    const ec = document.getElementById('endcap');
+    ec.setAttribute('cx', cx);
+    ec.setAttribute('cy', cy);
+    ec.style.display = '';
   }
 </script>
 </body>
