@@ -27,11 +27,7 @@
     height: 280px;
     margin-bottom: 28px;
   }
-  svg.ring {
-    width: 280px;
-    height: 280px;
-    transform: rotate(-90deg);
-  }
+  svg.ring { width: 280px; height: 280px; }
   .centre {
     position: absolute;
     inset: 0;
@@ -71,10 +67,12 @@
         <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     </defs>
+    <!-- Track and arc both use transform rotate(-90) so arc starts at top -->
     <circle cx="140" cy="140" r="110" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="28"/>
     <circle id="arc" cx="140" cy="140" r="110" fill="none" stroke="url(#ringGrad)"
       stroke-width="28" stroke-linecap="round" filter="url(#ringglow)"
-      stroke-dasharray="0 691.15"/>
+      stroke-dasharray="0 691.15"
+      transform="rotate(-90 140 140)"/>
     <circle id="endcap-outer" cx="140" cy="30" r="15" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.9" style="display:none"/>
     <circle id="endcap-inner" cx="140" cy="30" r="12" fill="#6a00ff" style="display:none"/>
   </svg>
@@ -111,8 +109,10 @@
   document.getElementById('arc').setAttribute('stroke-dasharray', filled + ' ' + remaining);
 
   if (accuracy > 0) {
-    // Arc starts at top (270deg in standard coords = -90deg offset)
-    // Goes clockwise. At 75%: 270 + (75/100 * 360) = 270 + 270 = 540 = 180deg standard
+    // Arc rotated -90deg around centre (140,140) so starts at top
+    // End cap angle in standard coords (no rotation needed since we rotated the arc element not the SVG)
+    // Start = top = 270deg standard = -90deg
+    // At X%: angle = -90 + (X/100 * 360)
     const angleDeg = -90 + (accuracy / 100) * 360;
     const angleRad = angleDeg * Math.PI / 180;
     const cx = (140 + r * Math.cos(angleRad)).toFixed(1);
