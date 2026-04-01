@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>听写 Ring Chart</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,7 +20,6 @@
     font-weight: 700;
     text-align: center;
     margin-bottom: 24px;
-    letter-spacing: 0.01em;
   }
   .ring-wrap {
     position: relative;
@@ -49,19 +47,9 @@
     color: #ffffff;
     line-height: 1;
   }
-  .acc-label {
-    font-size: 14px;
-    color: rgba(255,255,255,0.5);
-  }
-  .acc-sub {
-    font-size: 12px;
-    color: rgba(255,255,255,0.3);
-  }
-  .stats {
-    display: flex;
-    gap: 16px;
-    width: 100%;
-  }
+  .acc-label { font-size: 14px; color: rgba(255,255,255,0.5); }
+  .acc-sub   { font-size: 12px; color: rgba(255,255,255,0.3); }
+  .stats { display: flex; gap: 16px; width: 100%; }
   .stat-box {
     flex: 1;
     background: rgba(255,255,255,0.05);
@@ -75,15 +63,11 @@
     display: block;
     margin-bottom: 4px;
   }
-  .stat-lbl {
-    font-size: 11px;
-    color: rgba(255,255,255,0.5);
-  }
+  .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.5); }
 </style>
 </head>
 <body>
 <h2>听写 Accuracy This Period</h2>
-
 <div class="ring-wrap">
   <svg class="ring" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" id="ring-svg">
     <defs>
@@ -97,14 +81,12 @@
         <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     </defs>
-    <!-- Track -->
     <circle cx="140" cy="140" r="110" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="28"/>
-    <!-- Arc -->
     <circle id="arc" cx="140" cy="140" r="110" fill="none" stroke="url(#ringGrad)"
-      stroke-width="28" stroke-linecap="round" filter="url(#ringglow)"/>
-    <!-- End cap -->
-    <circle id="endcap-outer" cx="140" cy="30" r="16" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.85"/>
-    <circle id="endcap-inner" cx="140" cy="30" r="13" fill="#6a00ff"/>
+      stroke-width="28" stroke-linecap="round" filter="url(#ringglow)"
+      stroke-dasharray="0 691.15"/>
+    <circle id="endcap-outer" cx="140" cy="30" r="16" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.85" style="display:none"/>
+    <circle id="endcap-inner" cx="140" cy="30" r="13" fill="#6a00ff" style="display:none"/>
   </svg>
   <div class="centre">
     <span class="pct" id="pct-text">0%</span>
@@ -112,7 +94,6 @@
     <span class="acc-sub">This Period</span>
   </div>
 </div>
-
 <div class="stats">
   <div class="stat-box">
     <span class="stat-val" style="color:#b44dff" id="score-val">0/0</span>
@@ -123,7 +104,6 @@
     <span class="stat-lbl">Words in Pool</span>
   </div>
 </div>
-
 <script>
   const params = new URLSearchParams(window.location.search);
   const accuracy = parseFloat(params.get('accuracy')) || 0;
@@ -139,22 +119,17 @@
   const filled = (accuracy / 100) * circumference;
   const remaining = circumference - filled;
 
-  const arc = document.getElementById('arc');
-  arc.setAttribute('stroke-dasharray', filled + ' ' + remaining);
+  document.getElementById('arc').setAttribute('stroke-dasharray', filled + ' ' + remaining);
 
   if (accuracy > 0) {
     const angleDeg = (accuracy / 100) * 360 - 90;
     const angleRad = angleDeg * Math.PI / 180;
-    const cx = 140 + r * Math.cos(angleRad);
-    const cy = 140 + r * Math.sin(angleRad);
-
-    document.getElementById('endcap-outer').setAttribute('cx', cx.toFixed(1));
-    document.getElementById('endcap-outer').setAttribute('cy', cy.toFixed(1));
-    document.getElementById('endcap-inner').setAttribute('cx', cx.toFixed(1));
-    document.getElementById('endcap-inner').setAttribute('cy', cy.toFixed(1));
-  } else {
-    document.getElementById('endcap-outer').style.display = 'none';
-    document.getElementById('endcap-inner').style.display = 'none';
+    const cx = (140 + r * Math.cos(angleRad)).toFixed(1);
+    const cy = (140 + r * Math.sin(angleRad)).toFixed(1);
+    const eo = document.getElementById('endcap-outer');
+    const ei = document.getElementById('endcap-inner');
+    eo.setAttribute('cx', cx); eo.setAttribute('cy', cy); eo.style.display = '';
+    ei.setAttribute('cx', cx); ei.setAttribute('cy', cy); ei.style.display = '';
   }
 </script>
 </body>
