@@ -13,20 +13,21 @@
     font-family: 'Segoe UI', system-ui, sans-serif;
     display: flex;
     flex-direction: column;
+    justify-content: center;
   }
   h2 {
     color: #2d1a4a;
     font-size: 26px;
     font-weight: 700;
     text-align: left;
-    padding-left: calc(30px + 240px + 16px + 40px);
+    padding-left: calc(30px + 240px + 16px + 28px);
     margin-bottom: 56px;
   }
   .row {
     display: flex;
     align-items: center;
     margin-bottom: 30px;
-    gap: 16px;
+    gap: 20px;
   }
   .num {
     font-size: 19px;
@@ -81,23 +82,27 @@
     border-top: 0.5px solid #ede4d8;
     margin: 4px 0 12px;
   }
-  .disclaimer {
-    text-align: center;
-    color: #b0a090;
-    font-size: 15px;
-    margin-bottom: 10px;
-  }
-  .scale-row {
+  .footer-row {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
   }
-  .scale-spacer {
+  .footer-spacer {
     width: calc(30px + 240px + 16px + 16px);
     flex-shrink: 0;
   }
-  .scale {
+  .footer-track {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .disclaimer {
+    text-align: left;
+    color: #b0a090;
+    font-size: 15px;
+  }
+  .scale {
     display: flex;
     justify-content: space-between;
   }
@@ -105,14 +110,16 @@
 </style>
 </head>
 <body>
-<h2>Tuition Performance By Component (Year to Date)</h2>
+<h2>Tuition Performance By Component (Year To Date)</h2>
 <div id="chart"></div>
 <hr class="divider">
-<p class="disclaimer">Components without bar charts have not been assessed in tuition this year.</p>
-<div class="scale-row">
-  <div class="scale-spacer"></div>
-  <div class="scale">
-    <span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span>
+<div class="footer-row">
+  <div class="footer-spacer"></div>
+  <div class="footer-track">
+    <div class="scale">
+      <span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span>
+    </div>
+    <p class="disclaimer">Components without bar charts have not been assessed in tuition this year.</p>
   </div>
 </div>
 <script>
