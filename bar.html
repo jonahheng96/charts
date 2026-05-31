@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Component Bar Chart</title>
+<title>Tuition Performance by Component</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #1a1a2e;
+    background: #fefcf9;
     width: 1280px;
     height: 720px;
     padding: 50px 60px 44px;
@@ -16,8 +16,8 @@
     justify-content: center;
   }
   h2 {
-    color: rgba(255,255,255,0.85);
-    font-size: 22px;
+    color: #2d1a4a;
+    font-size: 26px;
     font-weight: 700;
     text-align: center;
     margin-bottom: 32px;
@@ -25,77 +25,83 @@
   .row {
     display: flex;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     gap: 16px;
   }
   .num {
-    font-size: 16px;
+    font-size: 19px;
     font-weight: 700;
     width: 30px;
     flex-shrink: 0;
   }
   .label {
-    font-size: 17px;
-    color: #ffffff;
-    width: 230px;
+    font-size: 19px;
+    color: #2d1a4a;
+    width: 240px;
     flex-shrink: 0;
   }
   .track-wrap {
     flex: 1;
     position: relative;
-    height: 38px;
+    height: 40px;
   }
   .track {
     position: absolute;
     inset: 0;
-    background: rgba(255,255,255,0.07);
-    border-radius: 19px;
+    background: #ede4d8;
+    border-radius: 20px;
   }
   .bar {
     position: absolute;
     top: 0; left: 0; bottom: 0;
-    border-radius: 19px;
-    overflow: hidden;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    overflow: visible;
   }
   .pct-label {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
-    color: #ffffff;
-    margin-right: 10px;
+    color: #1a1a1a;
+    margin-right: 12px;
     white-space: nowrap;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
   }
   .dot {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: #ffffff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 0 0 4px rgba(255,255,255,0.2);
     flex-shrink: 0;
+    margin-right: -6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.12);
   }
-  .row.inactive .num { opacity: 0.25; }
-  .row.inactive .label { opacity: 0.3; }
-  .row.inactive .track { background: rgba(255,255,255,0.05); }
   .divider {
     border: none;
-    border-top: 0.5px solid rgba(255,255,255,0.08);
+    border-top: 0.5px solid #ede4d8;
     margin: 16px 0 12px;
   }
   .disclaimer {
     text-align: center;
-    color: #555;
-    font-size: 14px;
+    color: #b0a090;
+    font-size: 15px;
     margin-bottom: 10px;
   }
+  .scale-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .scale-spacer {
+    width: calc(30px + 240px + 16px + 16px);
+    flex-shrink: 0;
+  }
   .scale {
+    flex: 1;
     display: flex;
     justify-content: space-between;
-    padding-left: 276px;
   }
-  .scale span { color: #444; font-size: 13px; }
+  .scale span { color: #b0a090; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -103,30 +109,34 @@
 <div id="chart"></div>
 <hr class="divider">
 <p class="disclaimer">Components without bar charts have not been assessed in tuition this year.</p>
-<div class="scale">
-  <span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span>
+<div class="scale-row">
+  <div class="scale-spacer"></div>
+  <div class="scale">
+    <span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span>
+  </div>
 </div>
 <script>
   const params = new URLSearchParams(window.location.search);
   const components = [
-    { key: 'compo',  label: 'Composition',             color: ['#ff6b9d','#ff8fab'] },
-    { key: 'lang',   label: 'Language Application',    color: ['#c44dff','#d580ff'] },
-    { key: 'compre', label: 'Comprehension',           color: ['#00d4ff','#66e5ff'] },
-    { key: 'oral',   label: 'Oral',                    color: ['#00ffb3','#66ffcc'] },
-    { key: 'lc',     label: 'Listening Comprehension', color: ['#ffd93d','#ffe680'] },
+    { key: 'compo',  label: 'Composition',             numColor: '#ff6b8a', gradFrom: '#ff6b8a', gradTo: '#ffb3c1' },
+    { key: 'lang',   label: 'Language Application',    numColor: '#c44dff', gradFrom: '#a020f0', gradTo: '#d580ff' },
+    { key: 'compre', label: 'Comprehension',           numColor: '#00aacc', gradFrom: '#00b8d9', gradTo: '#66e5ff' },
+    { key: 'oral',   label: 'Oral',                    numColor: '#00aa70', gradFrom: '#00c896', gradTo: '#66ffcc' },
+    { key: 'lc',     label: 'Listening Comprehension', numColor: '#cc9900', gradFrom: '#ffd93d', gradTo: '#ffe880' },
   ];
   const chart = document.getElementById('chart');
   components.forEach((c, i) => {
     const val = parseFloat(params.get(c.key)) || 0;
     const active = val > 0;
     const row = document.createElement('div');
-    row.className = 'row' + (active ? '' : ' inactive');
+    row.className = 'row';
+    row.style.opacity = active ? '1' : '0.25';
     row.innerHTML = `
-      <span class="num" style="color:${c.color[0]}">${String(i+1).padStart(2,'0')}</span>
+      <span class="num" style="color:${c.numColor}">${String(i+1).padStart(2,'0')}</span>
       <span class="label">${c.label}</span>
       <div class="track-wrap">
         <div class="track"></div>
-        ${active ? `<div class="bar" style="width:${Math.min(val,100)}%;background:linear-gradient(90deg,${c.color[0]},${c.color[1]});box-shadow:0 0 12px ${c.color[0]}66;">
+        ${active ? `<div class="bar" style="width:${Math.min(val,100)}%;background:linear-gradient(90deg,${c.gradFrom},${c.gradTo});">
           <span class="pct-label">${val}%</span>
           <div class="dot"></div>
         </div>` : ''}
