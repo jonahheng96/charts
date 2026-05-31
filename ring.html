@@ -6,7 +6,7 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #1a1a2e;
+    background: #fefcf9;
     width: 1280px;
     height: 720px;
     font-family: 'Segoe UI', system-ui, sans-serif;
@@ -22,8 +22,8 @@
     align-items: center;
   }
   h2 {
-    color: rgba(255,255,255,0.85);
-    font-size: 22px;
+    color: #2d1a4a;
+    font-size: 26px;
     font-weight: 700;
     text-align: center;
     margin-bottom: 32px;
@@ -42,30 +42,31 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: 4px;
   }
-  .pct { font-size: 72px; font-weight: 700; color: #ffffff; line-height: 1; }
-  .acc-label { font-size: 18px; color: rgba(255,255,255,0.5); }
-  .acc-sub   { font-size: 15px; color: rgba(255,255,255,0.3); }
+  .pct { font-size: 72px; font-weight: 700; color: #1a1a1a; line-height: 1; }
+  .acc-label { font-size: 20px; color: #7a6090; }
+  .acc-sub   { font-size: 16px; color: #b0a0c0; }
   .right {
     display: flex;
     flex-direction: column;
     gap: 24px;
   }
   .stat-box {
-    background: rgba(255,255,255,0.05);
+    background: #f0ecf8;
     border-radius: 16px;
-    padding: 24px 48px;
+    border: 0.5px solid #e0d8ec;
+    padding: 28px 52px;
     text-align: center;
-    min-width: 220px;
+    min-width: 240px;
   }
   .stat-val {
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 700;
     display: block;
     margin-bottom: 8px;
   }
-  .stat-lbl { font-size: 16px; color: rgba(255,255,255,0.5); }
+  .stat-lbl { font-size: 18px; color: #7a6090; }
 </style>
 </head>
 <body>
@@ -74,22 +75,21 @@
   <div class="ring-wrap">
     <svg class="ring" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#6a00ff"/>
-          <stop offset="50%" stop-color="#b44dff"/>
-          <stop offset="100%" stop-color="#ff4db8"/>
+        <linearGradient id="ringGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#a855f7"/>
+          <stop offset="50%" stop-color="#d946aa"/>
+          <stop offset="100%" stop-color="#fb6fbb"/>
         </linearGradient>
-        <filter id="ringglow">
-          <feGaussianBlur stdDeviation="5" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        <filter id="pillshadow" x="-60%" y="-60%" width="220%" height="220%">
+          <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="rgba(80,40,120,0.35)"/>
         </filter>
       </defs>
-      <circle cx="180" cy="180" r="140" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="36"/>
+      <circle cx="180" cy="180" r="140" fill="none" stroke="#ede4d8" stroke-width="36"/>
       <circle id="arc" cx="180" cy="180" r="140" fill="none" stroke="url(#ringGrad)"
-        stroke-width="36" stroke-linecap="round" filter="url(#ringglow)"
+        stroke-width="36" stroke-linecap="round"
         stroke-dasharray="0 879.65"
         transform="rotate(-90 180 180)"/>
-      <circle id="endcap" cx="180" cy="40" r="18" fill="#ffffff" style="display:none"/>
+      <circle id="endcap" cx="180" cy="40" r="18" fill="#ffffff" filter="url(#pillshadow)" style="display:none"/>
     </svg>
     <div class="centre">
       <span class="pct" id="pct-text">0%</span>
@@ -100,11 +100,11 @@
 </div>
 <div class="right">
   <div class="stat-box">
-    <span class="stat-val" style="color:#b44dff" id="score-val">0/0</span>
+    <span class="stat-val" style="color:#8b2be2" id="score-val">0/0</span>
     <span class="stat-lbl">Score This Period</span>
   </div>
   <div class="stat-box">
-    <span class="stat-val" style="color:#ff4db8" id="pool-val">0</span>
+    <span class="stat-val" style="color:#e0157a" id="pool-val">0</span>
     <span class="stat-lbl">Words in Pool</span>
   </div>
 </div>
@@ -121,8 +121,7 @@
   const r = 140;
   const circumference = 2 * Math.PI * r;
   const filled = (accuracy / 100) * circumference;
-  const remaining = circumference - filled;
-  document.getElementById('arc').setAttribute('stroke-dasharray', filled + ' ' + remaining);
+  document.getElementById('arc').setAttribute('stroke-dasharray', filled + ' ' + (circumference - filled));
 
   if (accuracy > 0) {
     const angleDeg = -90 + (accuracy / 100) * 360;
